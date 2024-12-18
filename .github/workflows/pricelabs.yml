@@ -1,16 +1,35 @@
-- name: Fetch data from PriceLabs
-  env:
-    API_KEY: ${{ secrets.PRICELABS_API_KEY }}
-  run: |
-    python - <<EOF
-    import requests
-    import os  # Hier hinzugefügt
-    url = "https://api.pricelabs.co/prices"
-    headers = {"Authorization": f"Bearer {os.environ['API_KEY']}"}
-    params = {"start_date": "2024-12-18", "end_date": "2024-12-25"}
-    response = requests.get(url, headers=headers, params=params)
-    if response.status_code == 200:
-        print("Data:", response.json())
-    else:
-        print("Error:", response.status_code, response.text)
-    EOF
+name: PriceLabs API Automation
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Läuft täglich um Mitternacht
+  workflow_dispatch:      # Manuelles Starten möglich
+
+jobs:
+  fetch_prices:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch data from PriceLabs
+        env:
+          API_KEY: ${{ secrets.PRICELABS_API_KEY }}
+        run: |
+          python - <<EOF
+          import requests
+          import os
+          url = "https://api.pricelabs.co/prices"
+          headers = {"Authorization": f"Bearer {os.environ['API_KEY']}"}
+          params = {"start_date": "2024-12-18", "end_date": "2024-12-25"}
+          response = requests.get(url, headers=headers, params=params)
+          if response.status_code == 200:
+              print("Data:", response.json())
+          else:
+              print("Error:", response.status_code, response.text)
+          EOF
