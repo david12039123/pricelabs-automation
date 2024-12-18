@@ -24,7 +24,7 @@ jobs:
           python - <<EOF
           import requests
           import os
-          url = "https://api.pricelabs.co/prices"
+url = "https://api.pricelabs.co/v1/listing_prices"
           headers = {"Authorization": f"Bearer {os.environ['API_KEY']}"}
           params = {"start_date": "2024-12-18", "end_date": "2024-12-25"}
           response = requests.get(url, headers=headers, params=params)
